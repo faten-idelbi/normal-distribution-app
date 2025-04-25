@@ -9,7 +9,8 @@ st.set_page_config(page_title="Probability Visualizer")
 st.title("Interactive Probability Distribution Visualizer")
 
 # Dropdown menu to choose distribution
-dist_type = st.selectbox("Choose a Distribution:", ["Normal", "Bimodal", "Poisson"])
+dist_type = st.selectbox("Choose a Distribution:", ["Normal", "Bimodal", "Poisson", "Compare All"])
+
 
 # Prepare the figure
 fig, ax = plt.subplots()
@@ -41,6 +42,35 @@ elif dist_type == "Poisson":
     ax.set_xlim(0, 30)
     ax.set_title("Poisson Distribution")
     ax.set_xlabel("Number of Events (k)")
+
+elif dist_type == "Compare All":
+    # Parameters for each distribution
+    mu = st.slider("Normal Mean (μ)", -10.0, 10.0, 0.0)
+    sigma = st.slider("Normal Std Dev (σ)", 0.5, 5.0, 1.0)
+    mu1 = -3
+    mu2 = 3
+    sigma_bi = 1.0
+    lambda_ = 5
+
+    # Normal
+    y_norm = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-((x - mu) ** 2) / (2 * sigma ** 2))
+    ax.plot(x, y_norm, label="Normal", color="blue")
+
+    # Bimodal
+    y1 = (1 / (sigma_bi * np.sqrt(2 * np.pi))) * np.exp(-((x - mu1) ** 2) / (2 * sigma_bi ** 2))
+    y2 = (1 / (sigma_bi * np.sqrt(2 * np.pi))) * np.exp(-((x - mu2) ** 2) / (2 * sigma_bi ** 2))
+    y_bi = (y1 + y2) / 2
+    ax.plot(x, y_bi, label="Bimodal", color="green")
+
+    # Poisson
+    x_p = np.arange(0, 30)
+    y_p = poisson.pmf(x_p, mu=lambda_)
+    ax.bar(x_p, y_p, color="orange", alpha=0.5, label="Poisson")
+
+    ax.set_title("Comparison: Normal vs Bimodal vs Poisson")
+    ax.set_xlim(-10, 30)
+    ax.legend()
+
 
 # Shared styling
 ax.set_ylabel("Probability")
