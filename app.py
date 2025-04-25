@@ -44,33 +44,41 @@ elif dist_type == "Poisson":
     ax.set_xlabel("Number of Events (k)")
 
 elif dist_type == "Compare All":
-    # Parameters for each distribution
+    st.markdown("### 🎯 Adjust and Compare All Distributions")
+
+    # Normal Distribution sliders
     mu = st.slider("Normal Mean (μ)", -10.0, 10.0, 0.0)
     sigma = st.slider("Normal Std Dev (σ)", 0.5, 5.0, 1.0)
-    mu1 = -3
-    mu2 = 3
-    sigma_bi = 1.0
-    lambda_ = 5
 
-    # Normal
+    # Bimodal Distribution sliders
+    mu1 = st.slider("Bimodal Peak 1 (μ₁)", -10.0, 0.0, -3.0)
+    mu2 = st.slider("Bimodal Peak 2 (μ₂)", 0.0, 10.0, 3.0)
+
+    # Poisson slider
+    lambda_ = st.slider("Poisson Rate (λ)", 1, 20, 5)
+
+    # Normal Distribution
     y_norm = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-((x - mu) ** 2) / (2 * sigma ** 2))
     ax.plot(x, y_norm, label="Normal", color="blue")
 
-    # Bimodal
+    # Bimodal Distribution
+    sigma_bi = 1.0
     y1 = (1 / (sigma_bi * np.sqrt(2 * np.pi))) * np.exp(-((x - mu1) ** 2) / (2 * sigma_bi ** 2))
     y2 = (1 / (sigma_bi * np.sqrt(2 * np.pi))) * np.exp(-((x - mu2) ** 2) / (2 * sigma_bi ** 2))
     y_bi = (y1 + y2) / 2
     ax.plot(x, y_bi, label="Bimodal", color="green")
 
-    # Poisson
+    # Poisson Distribution (discrete)
     x_p = np.arange(0, 30)
     y_p = poisson.pmf(x_p, mu=lambda_)
     ax.bar(x_p, y_p, color="orange", alpha=0.5, label="Poisson")
 
+    # Styling
     ax.set_title("Comparison: Normal vs Bimodal vs Poisson")
     ax.set_xlim(-10, 30)
+    ax.set_ylabel("Probability")
+    ax.grid(True)
     ax.legend()
-
 
 # Shared styling
 ax.set_ylabel("Probability")
