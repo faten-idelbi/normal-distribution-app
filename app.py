@@ -12,8 +12,6 @@ st.title("Interactive Probability Distribution Visualizer")
 dist_type = st.selectbox("Choose a Distribution:", ["Normal", "Bimodal", "Poisson", "Compare All"])
 
 
-# Prepare the figure
-fig, ax = plt.subplots()
 
 x = np.linspace(-20, 20, 500)
 
@@ -46,43 +44,36 @@ elif dist_type == "Poisson":
 elif dist_type == "Compare All":
     st.markdown("### 🎯 Adjust and Compare All Distributions")
 
-    # Create a side-by-side layout
-    col1, col2 = st.columns([1, 2])  # 1 part sliders, 2 parts graph
+    # Create layout: narrow column for sliders, wide column for graph
+    col1, col2 = st.columns([1, 3])  # 1/4 left (sliders), 3/4 right (graph)
 
     with col1:
         st.markdown("#### 🎛 Parameters")
-        
-        # Normal Distribution sliders
         mu = st.slider("Normal Mean (μ)", -10.0, 10.0, 0.0)
         sigma = st.slider("Normal Std Dev (σ)", 0.5, 5.0, 1.0)
-
-        # Bimodal Distribution sliders
         mu1 = st.slider("Bimodal Peak 1 (μ₁)", -10.0, 0.0, -3.0)
         mu2 = st.slider("Bimodal Peak 2 (μ₂)", 0.0, 10.0, 3.0)
-
-        # Poisson slider
         lambda_ = st.slider("Poisson Rate (λ)", 1, 20, 5)
 
     with col2:
-        fig_compare, ax_compare = plt.subplots()
+        fig_compare, ax_compare = plt.subplots(figsize=(10, 5))  # Wider graph
 
-        # Normal Distribution
+        # Normal
         y_norm = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-((x - mu) ** 2) / (2 * sigma ** 2))
         ax_compare.plot(x, y_norm, label="Normal", color="blue")
 
-        # Bimodal Distribution
+        # Bimodal
         sigma_bi = 1.0
         y1 = (1 / (sigma_bi * np.sqrt(2 * np.pi))) * np.exp(-((x - mu1) ** 2) / (2 * sigma_bi ** 2))
         y2 = (1 / (sigma_bi * np.sqrt(2 * np.pi))) * np.exp(-((x - mu2) ** 2) / (2 * sigma_bi ** 2))
         y_bi = (y1 + y2) / 2
         ax_compare.plot(x, y_bi, label="Bimodal", color="green")
 
-        # Poisson Distribution
+        # Poisson
         x_p = np.arange(0, 30)
         y_p = poisson.pmf(x_p, mu=lambda_)
         ax_compare.bar(x_p, y_p, color="orange", alpha=0.5, label="Poisson")
 
-        # Styling
         ax_compare.set_title("Comparison: Normal vs Bimodal vs Poisson")
         ax_compare.set_xlim(-10, 30)
         ax_compare.set_ylabel("Probability")
