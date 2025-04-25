@@ -16,6 +16,9 @@ dist_type = st.selectbox("Choose a Distribution:", ["Normal", "Bimodal", "Poisso
 x = np.linspace(-20, 20, 500)
 
 if dist_type == "Normal":
+# Prepare the figure
+fig, ax = plt.subplots()
+
     mu = st.slider("Mean (μ)", -10.0, 10.0, 0.0)
     sigma = st.slider("Standard Deviation (σ)", 0.5, 5.0, 1.0)
     y = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-((x - mu) ** 2) / (2 * sigma ** 2))
@@ -23,6 +26,9 @@ if dist_type == "Normal":
     ax.set_title("Normal Distribution")
 
 elif dist_type == "Bimodal":
+# Prepare the figure
+fig, ax = plt.subplots()
+
     mu1 = st.slider("First Peak Mean (μ₁)", -10.0, 0.0, -3.0)
     mu2 = st.slider("Second Peak Mean (μ₂)", 0.0, 10.0, 3.0)
     sigma = st.slider("Standard Deviation (σ)", 0.5, 5.0, 1.0)
@@ -33,6 +39,9 @@ elif dist_type == "Bimodal":
     ax.set_title("Bimodal Distribution")
 
 elif dist_type == "Poisson":
+# Prepare the figure
+fig, ax = plt.subplots()
+
     lambda_ = st.slider("Lambda (λ)", 1, 20, 5)
     x_vals = np.arange(0, 30)
     y_vals = poisson.pmf(x_vals, mu=lambda_)
