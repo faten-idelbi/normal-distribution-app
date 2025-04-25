@@ -1,25 +1,60 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import poisson
 
-# Title of the app
-st.title("Interactive Normal Distribution")
+st.set_page_config(page_title="Probability Visualizer")
 
-# Sliders for mean and standard deviation
-mean = st.slider("Select the Mean (μ)", -10.0, 10.0, 0.0)
-std_dev = st.slider("Select the Standard Deviation (σ)", 0.5, 5.0, 1.0)
+# App Title
+st.title("Interactive Probability Distribution Visualizer")
 
-# Generate data
-x = np.linspace(-20, 20, 400)
-y = (1 / (std_dev * np.sqrt(2 * np.pi))) * np.exp(-((x - mean)**2) / (2 * std_dev**2))
+# Dropdown menu to choose distribution
+dist_type = st.selectbox("Choose a Distribution:", ["Normal", "Bimodal", "Poisson"])
 
-# Plotting
+# Prepare the figure
 fig, ax = plt.subplots()
-ax.plot(x, y, color='blue')
-ax.set_title("Normal Distribution Curve")
-ax.set_xlabel("x")
-ax.set_ylabel("Probability Density")
+
+x = np.linspace(-20, 20, 500)
+
+if dist_type == "Normal":
+    mu = st.slider("Mean (μ)", -10.0, 10.0, 0.0)
+    sigma = st.slider("Standard Deviation (σ)", 0.5, 5.0, 1.0)
+    y = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-((x - mu) ** 2) / (2 * sigma ** 2))
+    ax.plot(x, y, color="blue")
+    ax.set_title("Normal Distribution")
+
+elif dist_type == "Bimodal":
+    mu1 = st.slider("First Peak Mean (μ₁)", -10.0, 0.0, -3.0)
+    mu2 = st.slider("Second Peak Mean (μ₂)", 0.0, 10.0, 3.0)
+    sigma = st.slider("Standard Deviation (σ)", 0.5, 5.0, 1.0)
+    y1 = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-((x - mu1) ** 2) / (2 * sigma ** 2))
+    y2 = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-((x - mu2) ** 2) / (2 * sigma ** 2))
+    y = (y1 + y2) / 2
+    ax.plot(x, y, color="green")
+    ax.set_title("Bimodal Distribution")
+
+elif dist_type == "Poisson":
+    lambda_ = st.slider("Lambda (λ)", 1, 20, 5)
+    x_vals = np.arange(0, 30)
+    y_vals = poisson.pmf(x_vals, mu=lambda_)
+    ax.bar(x_vals, y_vals, color="orange")
+    ax.set_xlim(0, 30)
+    ax.set_title("Poisson Distribution")
+    ax.set_xlabel("Number of Events (k)")
+
+# Shared styling
+ax.set_ylabel("Probability")
 ax.grid(True)
 
-# Show plot
+# Show the plot
 st.pyplot(fig)
+
+# Optional description to help students understand
+with st.expander("📘 Learn About This Distribution"):
+    if dist_type == "Normal":
+        st.markdown("Used for natural measurements like height or test scores. Symmetrical and centered around the mean.")
+    elif dist_type == "Bimodal":
+        st.markdown("Used when there are two groups in the data. Example: Two different teaching styles in a class.")
+    elif dist_type == "Poisson":
+        st.markdown("Used for counting how often something happens in a fixed time or space. Example: emails per hour.")
+
